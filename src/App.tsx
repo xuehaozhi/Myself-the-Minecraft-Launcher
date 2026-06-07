@@ -16,7 +16,10 @@ import {
   MessageSquare,
   FileText,
   Gamepad2,
-  ChevronLeft
+  User,
+  LogOut,
+  RotateCcw,
+  UserPlus
 } from 'lucide-react';
 import './index.css';
 
@@ -24,12 +27,13 @@ import './index.css';
 import { LaunchPage } from './pages/LaunchPage';
 import { DownloadPage } from './pages/DownloadPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { LoginPage } from './pages/LoginPage';
 
-type MainTab = 'launch' | 'download' | 'settings' | 'tools';
+type MainTab = 'launch' | 'download' | 'settings' | 'tools' | 'login';
 type SettingsSubTab = 'launch' | 'java' | 'management' | 'tools' | 'online' | 'customize' | 'misc' | 'about' | 'update' | 'feedback' | 'logs';
 
 function App() {
-  const { isGameRunning, runningVersion, performanceData } = useAppStore();
+  const { isGameRunning, runningVersion, performanceData, user, logout, refreshSkin } = useAppStore();
   const [activeMainTab, setActiveMainTab] = useState<MainTab>('launch');
   const [activeSettingsSubTab, setActiveSettingsSubTab] = useState<SettingsSubTab>('launch');
 
@@ -120,12 +124,81 @@ function App() {
             </button>
           </div>
 
-          {isGameRunning && (
-            <div className="flex items-center gap-2 px-4 py-1 bg-green-500/30 border border-green-500/50 rounded-full">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-sm text-green-200">游戏运行中</span>
-            </div>
-          )}
+          {/* 用户信息区域 */}
+          <div className="flex items-center gap-3">
+            {isGameRunning && (
+              <div className="flex items-center gap-2 px-4 py-1 bg-green-500/30 border border-green-500/50 rounded-full">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <span className="text-sm text-green-200">游戏运行中</span>
+              </div>
+            )}
+            
+            {user.isLoggedIn && user.currentProfile ? (
+              <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-full border border-white/20">
+                {/* 头像 */}
+                <div className="w-10 h-10 bg-white/20 rounded-lg overflow-hidden border-2 border-white/30">
+                  <img
+                    src={`https://mc-heads.net/avatar/${user.currentProfile.uuid}/40`}
+                    alt={user.currentProfile.username}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                      const placeholder = document.createElement('div');
+                      placeholder.innerHTML = `<span class="text-white text-lg font-bold">${user.currentProfile?.username.charAt(0).toUpperCase()}</span>`;
+                      (e.target as HTMLImageElement).parentElement?.appendChild(placeholder);
+                    }}
+                  />
+                </div>
+                
+                {/* 用户名 */}
+                <div className="text-left">
+                  <p className="text-white font-semibold text-sm">{user.currentProfile.username}</p>
+                  <p className="text-blue-200 text-xs">
+                    {user.loginType === 'microsoft' ? '微软账号' : 
+                     user.loginType === 'littleskin' ? 'LittleSkin' :
+                     user.loginType === 'mslskin' ? 'MSLSkin' : '第三方'}
+                  </p>
+                </div>
+
+                {/* 操作按钮 */}
+                <div className="flex items-center gap-1 ml-2">
+                  <button
+                    onClick={() => {
+                      // 切换角色功能
+                      alert('切换角色功能开发中...');
+                    }}
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                    title="切换角色"
+                  >
+                    <UserPlus className="w-4 h-4 text-white" />
+                  </button>
+                  <button
+                    onClick={refreshSkin}
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                    title="刷新皮肤"
+                  >
+                    <RotateCcw className="w-4 h-4 text-white" />
+                  </button>
+                  <button
+                    onClick={logout}
+                    className="p-2 hover:bg-red-500/30 rounded-lg transition-colors"
+                    title="退出登录"
+                  >
+                    <LogOut className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setActiveMainTab('login')}
+                className="flex items-center gap-2 px-5 py-2 bg-white/15 hover:bg-white/25 rounded-full border border-white/30 text-white font-medium transition-all"
+              >
+                <User className="w-4 h-4" />
+                登录
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -183,6 +256,9 @@ function App() {
 
           {/* 页面内容 */}
           <div className="relative z-10 h-full">
+            {activeMainTab === 'login' && (
+              <LoginPage onBack={() => setActiveMainTab('launch')} />
+            )}
             {activeMainTab === 'launch' && <LaunchPage />}
             {activeMainTab === 'download' && <DownloadPage />}
             {activeMainTab === 'settings' && <SettingsPage activeSubTab={activeSettingsSubTab} />}

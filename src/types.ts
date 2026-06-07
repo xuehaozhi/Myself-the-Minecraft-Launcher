@@ -48,3 +48,36 @@ export interface DownloadProgress {
   speed: number;
   status: 'downloading' | 'installing' | 'complete' | 'error';
 }
+
+// 自定义皮肤站类型
+export interface CustomSkinStation {
+  id: string;
+  name: string;
+  apiUrl: string;
+  username: string;
+  password: string; // 加密后存储
+  isDefault: boolean;
+}
+
+// 登录类型
+export type LoginType = 'microsoft' | 'littleskin' | 'mslskin' | 'custom';
+
+// 用户角色类型
+export interface UserProfile {
+  id: string;
+  username: string;
+  uuid: string;
+  skinUrl: string;
+  capeUrl?: string;
+}
+
+// 用户登录状态
+export interface UserState {
+  isLoggedIn: boolean;
+  loginType: LoginType | null;
+  currentProfile: UserProfile | null;
+  profiles: UserProfile[];
+  customSkinStations: CustomSkinStation[];
+  accessToken?: string;
+  refreshToken?: string;
+}
