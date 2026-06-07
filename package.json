@@ -1,7 +1,7 @@
 {
-  "name": "minecraft-launcher",
+  "name": "m2tl",
   "version": "1.0.0",
-  "description": "A modern Minecraft Launcher",
+  "description": "Myself the Minecraft Launcher (M2TL)",
   "type": "module",
   "scripts": {
     "dev": "vite",
