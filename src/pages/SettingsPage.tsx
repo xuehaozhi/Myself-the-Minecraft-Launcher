@@ -1,177 +1,281 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import { MemoryStick, Shield, Terminal, Coffee, Settings, Globe } from 'lucide-react';
+import {
+  MemoryStick,
+  Shield,
+  Terminal,
+  Coffee,
+  Settings,
+  Globe,
+  Palette,
+  Box,
+  Cpu,
+  Monitor,
+  Check
+} from 'lucide-react';
 
-export const SettingsPage = () => {
-  const { gameSettings, setGameSettings, javaVersions, setJavaVersions } = useAppStore();
+type SettingsSubTab = 'launch' | 'java' | 'management' | 'tools' | 'online' | 'customize' | 'misc' | 'about' | 'update' | 'feedback' | 'logs';
+
+interface SettingsPageProps {
+  activeSubTab: SettingsSubTab;
+}
+
+export const SettingsPage = ({ activeSubTab }: SettingsPageProps) => {
+  const { gameSettings, setGameSettings } = useAppStore();
   const [tempMaxMemory, setTempMaxMemory] = useState(gameSettings.memory.max);
 
-  const handleMemorySave = () => {
-    setGameSettings({
-      memory: {
-        ...gameSettings.memory,
-        max: tempMaxMemory,
-      },
-    });
+  // 渲染不同的设置内容
+  const renderContent = () => {
+    switch (activeSubTab) {
+      case 'launch':
+        return (
+          <div className="space-y-6">
+            {/* 启动选项 */}
+            <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200/50 p-5 shadow-lg">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">启动选项</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">默认版本隔离</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                    <option>隔离所有实例</option>
+                    <option>不隔离</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">游戏窗口标题</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                    <option>默认</option>
+                    <option>自定义</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">自定义信息</label>
+                  <input type="text" className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500" placeholder="自定义信息" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">启动器可见性</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                    <option>游戏启动后仍保持不变</option>
+                    <option>游戏启动后最小化</option>
+                    <option>游戏启动后隐藏</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">进程优先级</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                    <option>中（平衡）</option>
+                    <option>高</option>
+                    <option>实时</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">窗口大小</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                    <option>默认</option>
+                    <option>854×480</option>
+                    <option>1280×720</option>
+                    <option>1920×1080</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">正版验证方式</label>
+                  <select className="bg-gray-200 border border-gray-300 rounded-lg px-4 py-2 w-64 text-gray-500 cursor-not-allowed" disabled>
+                    <option>设备代码流</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">IP协议偏好</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
+                    <option>Java 默认</option>
+                    <option>IPv4 优先</option>
+                    <option>IPv6 优先</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 游戏内存 */}
+            <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200/50 p-5 shadow-lg">
+              <h3 className="text-lg font-bold text-blue-600 mb-4">游戏内存</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full border-2 border-blue-500 flex items-center justify-center bg-blue-500">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-gray-700 font-medium">自动配置</span>
+                </div>
+                <div className="flex items-center gap-3 ml-8">
+                  <div className="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center" />
+                  <span className="text-gray-700 font-medium">自定义</span>
+                </div>
+                <div className="ml-8">
+                  <div className="w-full h-2 bg-gray-200 rounded-lg mb-2">
+                    <div className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg" style={{ width: '66%' }} />
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>已使用内存 / 已安装内存</span>
+                    <span className="text-blue-600 font-bold">游戏分配</span>
+                  </div>
+                  <div className="flex justify-between font-mono text-lg mt-1">
+                    <span className="text-gray-700">10.2 GB / 15.9 GB</span>
+                    <span className="text-blue-600 font-bold">3.7 GB</span>
+                  </div>
+                </div>
+                <label className="flex items-center gap-3 ml-8">
+                  <input type="checkbox" className="w-4 h-4 text-blue-500" />
+                  <span className="text-gray-600">启动游戏前进行内存优化</span>
+                </label>
+              </div>
+            </div>
+
+            {/* 高级启动选项 */}
+            <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200/50 p-5 shadow-lg">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-800">高级启动选项</h3>
+                <div className="text-gray-500">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'java':
+        return (
+          <div className="space-y-6">
+            {/* Java 版本选择 */}
+            <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200/50 p-5 shadow-lg">
+              <div className="space-y-3">
+                <div className="p-4 border-l-4 border-blue-500 bg-blue-50 rounded-r-lg">
+                  <div className="font-bold text-gray-800">自动选择</div>
+                  <div className="text-sm text-gray-500">Java 选择自动档，依据游戏需要自动选择合适的 Java</div>
+                </div>
+                <div className="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <div className="font-medium text-gray-800">JDK 25</div>
+                  <div className="text-sm text-gray-500 flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-gray-200 rounded text-xs">64 Bit</span>
+                    <span>Microsoft</span>
+                    <span className="text-gray-400">C:\Users\User\AppData\Roaming\.minecraft\runtime\java-runtime-epsilon\bin</span>
+                  </div>
+                </div>
+                <div className="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <div className="font-medium text-gray-800">JDK 21</div>
+                  <div className="text-sm text-gray-500 flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-gray-200 rounded text-xs">64 Bit</span>
+                    <span>OpenJDK</span>
+                    <span className="text-gray-400">E:\opendjk-21_windows-x64_bin.zipjdk-21\bin</span>
+                  </div>
+                </div>
+                <div className="p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <div className="font-medium text-gray-800">JDK 17</div>
+                  <div className="text-sm text-gray-500 flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-gray-200 rounded text-xs">64 Bit</span>
+                    <span>Oracle</span>
+                    <span className="text-gray-400">C:\Program Files\Java\jdk-17\bin</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'management':
+        return (
+          <div className="space-y-6">
+            {/* 游戏资源获取行为 */}
+            <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200/50 p-5 shadow-lg">
+              <h3 className="text-lg font-bold text-blue-600 mb-4">游戏资源获取行为</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">文件下载源</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-80 focus:outline-none focus:border-blue-500">
+                    <option>尽量使用镜像源</option>
+                    <option>只使用官方源</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">版本列表源</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-80 focus:outline-none focus:border-blue-500">
+                    <option>尽量使用镜像源（可能缺少刚刚更新的版本）</option>
+                    <option>只使用官方源</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">最大线程数</label>
+                  <input type="range" className="w-80" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">速度限制</label>
+                  <input type="range" className="w-80" />
+                </div>
+                <div className="text-sm text-gray-500">
+                  <p>目标文件夹</p>
+                  <p className="mt-1">请在 启动 → 实例选择 → 文件夹列表 中更改下载目标文件夹。</p>
+                  <p>在某个文件夹或游戏实例上右键，即可选择打开对应文件夹。</p>
+                </div>
+                <div className="flex items-center gap-8">
+                  <label className="flex items-center gap-2 text-gray-700 font-medium">
+                    <input type="checkbox" className="w-4 h-4 text-blue-500" checked />
+                    <span>安装新实例后自动选定该实例</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-gray-700 font-medium">
+                    <input type="checkbox" className="w-4 h-4 text-blue-500" checked />
+                    <span>升级部分版本的 Authlib</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* 社区资源获取行为 */}
+            <div className="bg-white/80 backdrop-blur rounded-xl border border-blue-200/50 p-5 shadow-lg">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">社区资源获取行为</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">下载源</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-80 focus:outline-none focus:border-blue-500">
+                    <option>尽量使用镜像源</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">文件名格式</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-80 focus:outline-none focus:border-blue-500">
+                    <option>[机械动力] create-1.21.1-6.0.4</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <label className="text-gray-700 font-medium">Mod 管理样式</label>
+                  <select className="bg-white border border-gray-300 rounded-lg px-4 py-2 w-80 focus:outline-none focus:border-blue-500">
+                    <option>标题显示译名，详情显示文件名</option>
+                  </select>
+                </div>
+                <label className="flex items-center gap-2 text-gray-700 font-medium">
+                  <input type="checkbox" className="w-4 h-4 text-blue-500" />
+                  <span>不显示 Quilt 加载器</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-gray-700 mb-2">即将到来</h2>
+              <p className="text-gray-500">此功能正在开发中...</p>
+            </div>
+          </div>
+        );
+    }
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-blue-100/10 to-blue-50/5 min-h-full">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* 页面标题 */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-blue-500/20 rounded-lg">
-            <Settings className="w-6 h-6 text-blue-400" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white">设置</h1>
-            <p className="text-gray-400 text-sm">配置 M2TL 启动器</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {/* 内存设置 */}
-          <div className="bg-white/10 backdrop-blur rounded-lg border border-white/20 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <MemoryStick className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">内存分配</h2>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm text-gray-300">最大内存</label>
-                  <span className="text-sm text-white font-mono">{tempMaxMemory} MB</span>
-                </div>
-                <input
-                  type="range"
-                  min="1024"
-                  max="16384"
-                  step="512"
-                  value={tempMaxMemory}
-                  onChange={(e) => setTempMaxMemory(parseInt(e.target.value))}
-                  onMouseUp={handleMemorySave}
-                  onTouchEnd={handleMemorySave}
-                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>1 GB</span>
-                  <span>4 GB</span>
-                  <span>8 GB</span>
-                  <span>16 GB</span>
-                </div>
-              </div>
-              
-              <div className="p-3 bg-gray-700/30 rounded-lg">
-                <p className="text-sm text-gray-400">
-                  💡 建议分配系统内存的 50-75% 给 Minecraft。例如 8GB 内存的系统推荐 4-5GB。
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 版本隔离 */}
-          <div className="bg-white/10 backdrop-blur rounded-lg border border-white/20 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Shield className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">版本隔离</h2>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white">为每个版本使用独立的 .minecraft 目录</p>
-                <p className="text-sm text-gray-400">可以防止版本间的配置和模组冲突</p>
-              </div>
-              <button
-                onClick={() => setGameSettings({ versionIsolation: !gameSettings.versionIsolation })}
-                className={`
-                  relative inline-flex h-8 w-16 items-center rounded-full transition-colors
-                  ${gameSettings.versionIsolation ? 'bg-blue-500' : 'bg-gray-600'}
-                `}
-              >
-                <span
-                  className={`
-                    inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform
-                    ${gameSettings.versionIsolation ? 'translate-x-9' : 'translate-x-1'}
-                  `}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* Java 设置 */}
-          <div className="bg-white/10 backdrop-blur rounded-lg border border-white/20 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Coffee className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">Java 虚拟机设置</h2>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-gray-300 block mb-2">Java 版本</label>
-                <select
-                  value={gameSettings.selectedJava}
-                  onChange={(e) => setGameSettings({ selectedJava: e.target.value })}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500"
-                >
-                  <option value="">自动选择</option>
-                  <option value="java-21">Java 21</option>
-                  <option value="java-17">Java 17</option>
-                  <option value="java-11">Java 11</option>
-                  <option value="java-8">Java 8</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="text-sm text-gray-300 block mb-2">自定义 JVM 参数</label>
-                <textarea
-                  value={gameSettings.javaArgs}
-                  onChange={(e) => setGameSettings({ javaArgs: e.target.value })}
-                  placeholder="-XX:+UseG1GC -XX:+ParallelRefProcEnabled..."
-                  className="w-full h-24 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white text-sm font-mono resize-none focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 下载源设置 */}
-          <div className="bg-white/10 backdrop-blur rounded-lg border border-white/20 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Globe className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">下载源设置</h2>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700/70 transition-colors">
-                <input
-                  type="radio"
-                  name="downloadSourceSettings"
-                  value="mojang"
-                  checked={true}
-                  className="w-4 h-4 text-blue-500"
-                  onChange={() => {}}
-                />
-                <div>
-                  <span className="text-white">Mojang 官方源</span>
-                  <p className="text-xs text-gray-400">稳定可靠，但在国内可能较慢</p>
-                </div>
-              </label>
-              <label className="flex items-center gap-3 p-3 bg-gray-700/30 rounded-lg cursor-not-allowed opacity-60">
-                <input
-                  type="radio"
-                  name="downloadSourceSettings"
-                  value="coming"
-                  disabled
-                  className="w-4 h-4 text-gray-500"
-                />
-                <div>
-                  <span className="text-gray-400">敬请期待</span>
-                  <p className="text-xs text-gray-500">更多下载源即将到来...</p>
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
+    <div className="p-6 overflow-y-auto h-full">
+      <div className="max-w-4xl mx-auto">
+        {renderContent()}
       </div>
     </div>
   );
